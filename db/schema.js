@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
   },
   username: { type: String, required: true },
   password: String,
-  friends: [UserSchema]
+  friends: []
 });
 
 const EventSchema = new mongoose.Schema({
@@ -28,3 +28,13 @@ const CitySchema = new mongoose.Schema({
   events: [EventSchema],
   people: [UserSchema]
 });
+
+const User = mongoose.model("User", UserSchema);
+const Event = mongoose.model("Event", EventSchema);
+const City = mongoose.model("City", CitySchema);
+
+module.exports = {
+  User,
+  Event,
+  City
+};
