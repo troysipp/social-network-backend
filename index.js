@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const parser = require("body-parser");
+const cors = require("cors");
 
 app.use(parser.json());
 // app.use(auth.initialize());
@@ -8,6 +9,22 @@ app.use(parser.json());
 const Event = require("./db/schema").Event;
 const User = require("./db/schema").User;
 const City = require("./db/schema").City;
+
+let cors_list;
+
+if (process.env.NODE_ENV === "production") {
+  //   cors_list = {
+  //     origin: "http://home-finder.surge.sh",
+  //     default: "http://home-finder.surge.sh"
+  //   };
+  // } else {
+  cors_list = {
+    origin: "http://localhost:3000",
+    default: "http://localhost:3000"
+  };
+}
+
+app.use(cors(cors_list));
 
 app.listen(3001, () => {
   console.log("app listening on port 3001");
