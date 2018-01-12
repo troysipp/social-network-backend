@@ -5,6 +5,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jwt-simple");
 const passport = require("passport");
+const cfg = require("./config.js");
 
 const auth = require("./auth")();
 const Event = require("./db/schema").Event;
@@ -40,22 +41,29 @@ app.get("/", (req, res) => {
 
 app.post("/api/login", function(req, res) {
   if (req.body.email && req.body.password) {
+    console.log(req.body.email);
     User.findOne({ email: req.body.email }).then(user => {
       if (user) {
-        bcrypt.compare(req.body.password, user.password, function(
-          err,
-          response
-        ) {
-          if (response) {
-            let payload = { id: user.id };
-            let token = jwt.encode(payload, cfg.jwtSecret);
-            res.json({ token: token });
-          } else {
-            res.sendStatus(500);
-          }
-        });
+        //  bcrypt.compare(
+        if (req.body.password === user.password) {
+          //   , function(
+          //   err,
+          //   response
+          // ) {
+          //   if (response) {
+          let payload = { id: user.id };
+          let token = jwt.encode(payload, cfg.jwtSecret);
+          res.json({ token: token });
+        } else {
+          console.log(user);
+          console.log(response);
+          console.log(err);
+          console.log(req.body.password.length);
+          console.log(user.password.length);
+          res.sendStatus(500);
+        }
       } else {
-        res.sendStatus(500);
+        res.sendStatus(503);
       }
     });
   } else {
