@@ -85,6 +85,9 @@ app.post("/api/signup", function(req, res) {
 });
 
 app.get("/api/events", (req, res) => {
+  // console.log(req);
+  // if (req.headers.token && req.headers.token.length > 0) {
+  //   let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id;
   Event.find()
     .then(events => {
       res.json({
@@ -104,6 +107,24 @@ app.get("/api/cities", (req, res) => {
     .catch(err => console.log(err));
 });
 
+// app.get("/api/cities/:name", (req, res) => {
+//   console.log("here!");
+//   console.log(req.params.name);
+//   City.findOne({ name: req.params.name }, function(err, foundCity) {
+//     console.log(err);
+//     console.log(res);
+//   })
+//     .then(city => {
+//       console.log(city);
+//       res
+//         .json({
+//           events: city.events
+//         })
+//         .catch(err => console.log(err));
+//     })
+//     .catch(err => console.log(err));
+// });
+
 app.get("/api/users", (req, res) => {
   User.find()
     .then(users => {
@@ -115,26 +136,3 @@ app.get("/api/users", (req, res) => {
 });
 
 module.exports = app;
-
-// app.get("/api/homes", (req, res) => {
-//   if (req.headers.token && req.headers.token.length > 0) {
-//     let userid = jwt.decode(req.headers.token, cfg.jwtSecret).id;
-//     Home.find()
-//       .then(homes => {
-//         res.json({
-//           homes: homes,
-//           userid: userid
-//         });
-//       })
-//       .catch(err => console.log(err));
-//   } else {
-//     Home.find()
-//       .then(homes => {
-//         res.json({
-//           homes: homes,
-//           userid: ""
-//         });
-//       })
-//       .catch(err => console.log(err));
-//   }
-// });

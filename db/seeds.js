@@ -46,17 +46,20 @@ let teaTasting = new Event({
 
 let dc = new City({
   name: "Washington D.C.",
+  shortHand: "dc",
   people: [troy, jackie],
   events: [soccer, teaTasting]
 });
 
 let nyc = new City({
   name: "New York City",
+  shorthand: "nyc",
   people: [clara]
 });
 
 let boston = new City({
   name: "Boston",
+  shortHand: "boston",
   people: [stones]
 });
 
