@@ -41,25 +41,13 @@ app.get("/", (req, res) => {
 
 app.post("/api/login", function(req, res) {
   if (req.body.email && req.body.password) {
-    console.log(req.body.email);
     User.findOne({ email: req.body.email }).then(user => {
       if (user) {
-        //  bcrypt.compare(
         if (req.body.password === user.password) {
-          //   , function(
-          //   err,
-          //   response
-          // ) {
-          //   if (response) {
           let payload = { id: user.id };
           let token = jwt.encode(payload, cfg.jwtSecret);
           res.json({ token: token });
         } else {
-          console.log(user);
-          console.log(response);
-          console.log(err);
-          console.log(req.body.password.length);
-          console.log(user.password.length);
           res.sendStatus(500);
         }
       } else {
@@ -78,7 +66,8 @@ app.post("/api/signup", function(req, res) {
         res.sendStatus(500);
       } else {
         bcrypt.hash(req.body.password, 10, function(err, hash) {
-          User.create({ email: req.body.email, password: hash }).then(user => {
+          let user = new User(req.body);
+          user.save((err, createdUserObject) => {
             if (user) {
               let payload = { id: user.id };
               let token = jwt.encode(payload, cfg.jwtSecret);
