@@ -18,11 +18,11 @@ app.use(auth.initialize());
 let cors_list;
 
 if (process.env.NODE_ENV === "production") {
-  //   cors_list = {
-  //     origin: "http://home-finder.surge.sh",
-  //     default: "http://home-finder.surge.sh"
-  //   };
-  // } else {
+  cors_list = {
+    origin: "http://social-network.surge.sh",
+    default: "http://social-network.surge.sh"
+  };
+} else {
   cors_list = {
     origin: "http://localhost:3000",
     default: "http://localhost:3000"
