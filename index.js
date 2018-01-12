@@ -2,13 +2,18 @@ const express = require("express");
 const app = express();
 const parser = require("body-parser");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
+const jwt = require("jwt-simple");
+const passport = require("passport");
+const cfg = require("./config.js");
 
-app.use(parser.json());
-// app.use(auth.initialize());
-
+const auth = require("./auth")();
 const Event = require("./db/schema").Event;
 const User = require("./db/schema").User;
 const City = require("./db/schema").City;
+
+app.use(parser.json());
+app.use(auth.initialize());
 
 let cors_list;
 
@@ -32,6 +37,51 @@ app.listen(3001, () => {
 
 app.get("/", (req, res) => {
   res.send("hello there");
+});
+
+app.post("/api/login", function(req, res) {
+  if (req.body.email && req.body.password) {
+    User.findOne({ email: req.body.email }).then(user => {
+      if (user) {
+        if (req.body.password === user.password) {
+          let payload = { id: user.id };
+          let token = jwt.encode(payload, cfg.jwtSecret);
+          res.json({ token: token });
+        } else {
+          res.sendStatus(500);
+        }
+      } else {
+        res.sendStatus(503);
+      }
+    });
+  } else {
+    res.sendStatus(401);
+  }
+});
+
+app.post("/api/signup", function(req, res) {
+  if (req.body.email && req.body.password) {
+    User.findOne({ email: req.body.email }).then(user => {
+      if (user) {
+        res.sendStatus(500);
+      } else {
+        bcrypt.hash(req.body.password, 10, function(err, hash) {
+          let user = new User(req.body);
+          user.save((err, createdUserObject) => {
+            if (user) {
+              let payload = { id: user.id };
+              let token = jwt.encode(payload, cfg.jwtSecret);
+              res.json({ token: token });
+            } else {
+              res.sendStatus(401);
+            }
+          });
+        });
+      }
+    });
+  } else {
+    res.sendStatus(401);
+  }
 });
 
 app.get("/api/events", (req, res) => {
@@ -63,6 +113,8 @@ app.get("/api/users", (req, res) => {
     })
     .catch(err => console.log(err));
 });
+
+module.exports = app;
 
 // app.get("/api/homes", (req, res) => {
 //   if (req.headers.token && req.headers.token.length > 0) {
